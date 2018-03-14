@@ -4,11 +4,11 @@ import * as firebase from 'firebase';
 
 
 const firebaseConfig = {
-  apiKey: "",
-  authDomain: "",
-  databaseURL: "",
-  projectId: "",
-  storageBucket: "",
+  apiKey: "AIzaSyDWa2yQef7M7xUiTW10srZPx9VFgYHpNIY",
+  authDomain: "react-firebase-535c8.firebaseapp.com",
+  databaseURL: "https://react-firebase-535c8.firebaseio.com",
+  projectId: "react-firebase-535c8",
+  storageBucket: "react-firebase-535c8.appspot.com",
   
 };
 firebase.initializeApp(firebaseConfig);
@@ -52,7 +52,26 @@ export default class App extends React.Component {
     }
   }
 
+  async loginWithFacebook(){
+    const {type,token} = await Expo.Facebook.logInWithReadPermissionsAsync
+    ('369682476845019', {permissions: ['public_profile']}
+  )
+    if (type=='success'){
+      const credential = firebase.auth.FacebookAuthProvider.credential(token)
+      firebase.auth().signInWithCredential(credential).catch((error)=>{
+        console.log(error)
+      })
+    }
+  
+  }
 
+  componentDidMount(){
+    firebase.auth().onAuthStateChanged((user) =>{
+      if(user != null){
+        console.log(user)
+      }
+    })
+  }
 
   render() {
     return (
@@ -72,6 +91,9 @@ export default class App extends React.Component {
           </Button>
           <Button rounded full primary style={{ marginTop: 10}} onPress={()=> this.signUpUser(this.state.email, this.state.password)}>
           <Text style={{ color: 'white'}} >SignUp</Text>
+          </Button>
+          <Button rounded full primary style={{ marginTop: 10}} onPress={()=> this.loginWithFacebook() }>
+          <Text style={{ color: 'white'}} >Login With Facebook</Text>
           </Button>
           </Form>
        </Container> 
